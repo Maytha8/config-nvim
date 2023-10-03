@@ -1,0 +1,76 @@
+require('lazy').setup({
+	'AstroNvim/astrotheme',
+	'christoomey/vim-tmux-navigator',
+	'lewis6991/gitsigns.nvim',
+	'tpope/vim-fugitive',
+	'tpope/vim-rhubarb',
+	'tpope/vim-sleuth',
+	'tpope/vim-unimpaired',
+	'tpope/vim-surround',
+	{ 'nvim-treesitter/nvim-treesitter', build = ':TSUpdate' },
+	{ 'nvim-treesitter/nvim-treesitter-context', dependencies = { 'nvim-treesitter/nvim-treesitter' } },
+	{ 'akinsho/bufferline.nvim', version = '*', dependencies = { 'nvim-tree/nvim-web-devicons' } },
+	'nvim-lualine/lualine.nvim',
+	{
+		'neovim/nvim-lspconfig',
+		dependencies = {
+			'williamboman/mason.nvim',
+			'williamboman/mason-lspconfig.nvim',
+			'folke/neodev.nvim',
+			{
+				'hrsh7th/nvim-cmp',
+				dependencies = {
+					'L3MON4D3/LuaSnip',
+					'saadparwaiz1/cmp_luasnip',
+					'hrsh7th/cmp-nvim-lsp',
+					'rafamadriz/friendly-snippets',
+				},
+			},
+			'mhartington/formatter.nvim',
+			'mfussenegger/nvim-lint',
+		},
+	},
+	{
+		'folke/trouble.nvim',
+		dependencies = {
+			'nvim-tree/nvim-web-devicons',
+		},
+	},
+	'karb94/neoscroll.nvim',
+	'numToStr/Comment.nvim',
+	{
+		'nvim-telescope/telescope.nvim',
+		tag = '0.1.3',
+		dependencies = {
+			'nvim-lua/plenary.nvim',
+			'nvim-tree/nvim-web-devicons',
+			{
+				'nvim-telescope/telescope-fzf-native.nvim',
+				build = 'cmake -S. -Bbuild -DCMAKE_BUILD_TYPE=Release && cmake --build build --config Release && cmake --install build --prefix build',
+			},
+		},
+	},
+	'folke/which-key.nvim',
+	{ 'kristijanhusak/vim-dadbod-ui', dependencies = { 'tpope/vim-dadbod' } },
+	'preservim/tagbar',
+	{
+		'nvim-neo-tree/neo-tree.nvim',
+		dependencies = {
+			'nvim-lua/plenary.nvim',
+			'nvim-tree/nvim-web-devicons',
+			'MunifTanjim/nui.nvim',
+		},
+	},
+	'lukas-reineke/indent-blankline.nvim',
+	'lambdalisue/suda.vim',
+	'famiu/bufdelete.nvim',
+	-- 'ThePrimeagen/vim-be-good',
+	{
+		'ThePrimeagen/harpoon',
+		dependencies = { 'nvim-lua/plenary.nvim' },
+	},
+	'mbbill/undotree',
+	'saecki/crates.nvim',
+	'mcookly/bidi.nvim',
+	'jamessan/vim-gnupg',
+})

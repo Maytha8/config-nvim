@@ -1,0 +1,8 @@
+vim.keymap.set("n", "<c-h>", ":bprev<cr>")
+vim.keymap.set("n", "<c-l>", ":bnext<cr>")
+vim.keymap.set("n", "<leader>w", function()
+	require("bufdelete").bufdelete(0)
+end)
+vim.keymap.set("n", "<leader>W", function()
+	require("bufdelete").bufdelete(0, true)
+end)
