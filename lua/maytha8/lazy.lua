@@ -14,3 +14,5 @@ vim.opt.rtp:prepend(lazypath)
 vim.keymap.set("n", "<leader>3", function()
 	require("lazy").install()
 end)
+
+require('lazy').setup('maytha8/plugins')

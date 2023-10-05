@@ -1,3 +1,5 @@
+---@diagnostic disable:missing-fields
+
 -- Mason
 require('mason').setup({
 	ui = {
@@ -12,6 +14,17 @@ require('mason').setup({
 vim.keymap.set('n', '<leader>4', function()
 	require('mason.ui').open()
 end)
+
+-- Treesitter
+require('nvim-treesitter.configs').setup({
+	ensure_installed = { 'lua' },
+	sync_install = false,
+	auto_install = true,
+	highlight = { enable = true },
+	indent = { enable = true },
+})
+
+require('treesitter-context').setup({ enable = true })
 
 -- [[ Configure LSP ]]
 --  This function gets run when an LSP connects to a particular buffer.
@@ -74,9 +87,9 @@ local servers = {
 	rust_analyzer = {},
 	tsserver = {},
 	html = {},
-	volar = {},
+	-- volar = {},
 	-- tailwindcss = {},
-	svelte = {},
+	-- svelte = {},
 
 	lua_ls = {
 		Lua = {
@@ -114,6 +127,8 @@ mason_lspconfig.setup_handlers({
 -- [[ Configure nvim-cmp ]]
 -- See `:help cmp`
 local cmp = require('cmp')
+local types = require('cmp.types')
+
 local luasnip = require('luasnip')
 require('luasnip.loaders.from_vscode').lazy_load()
 luasnip.config.setup({})
@@ -124,23 +139,23 @@ cmp.setup({
 			luasnip.lsp_expand(args.body)
 		end,
 	},
-	mapping = cmp.mapping.preset.insert({
-		['<C-n>'] = cmp.mapping.select_next_item(),
-		['<C-p>'] = cmp.mapping.select_prev_item(),
-		['<C-d>'] = cmp.mapping.scroll_docs(-4),
-		['<C-f>'] = cmp.mapping.scroll_docs(4),
-		['<C-Space>'] = cmp.mapping.complete({}),
-		['<CR>'] = cmp.mapping({
-			i = function(fallback)
-				if cmp.visible() and cmp.get_active_entry() then
-					cmp.confirm({ behavior = cmp.ConfirmBehavior.Replace, select = false })
-				else
-					fallback()
-				end
-			end,
-			s = cmp.mapping.confirm({ select = true }),
-			c = cmp.mapping.confirm({ behavior = cmp.ConfirmBehavior.Replace, select = true }),
-		}),
+	mapping = {
+		-- ['<C-n>'] = cmp.mapping.select_next_item(),
+		-- ['<C-p>'] = cmp.mapping.select_prev_item(),
+		-- ['<C-d>'] = cmp.mapping.scroll_docs(-4),
+		-- ['<C-f>'] = cmp.mapping.scroll_docs(4),
+		-- ['<C-Space>'] = cmp.mapping.complete({}),
+		-- ['<CR>'] = cmp.mapping({
+		-- 	i = function(fallback)
+		-- 		if cmp.visible() and cmp.get_active_entry() then
+		-- 			cmp.confirm({ behavior = cmp.ConfirmBehavior.Replace, select = false })
+		-- 		else
+		-- 			fallback()
+		-- 		end
+		-- 	end,
+		-- 	s = cmp.mapping.confirm({ select = true }),
+		-- 	c = cmp.mapping.confirm({ behavior = cmp.ConfirmBehavior.Replace, select = true }),
+		-- }),
 		['<Tab>'] = cmp.mapping(function(fallback)
 			if cmp.visible() then
 				cmp.select_next_item()
@@ -159,13 +174,50 @@ cmp.setup({
 				fallback()
 			end
 		end, { 'i', 's' }),
-	}),
+		['<Down>'] = {
+			i = cmp.mapping.select_next_item({ behaviour = types.cmp.SelectBehavior.Select }),
+		},
+		['<Up>'] = {
+			i = cmp.mapping.select_prev_item({ behaviour = types.cmp.SelectBehavior.Select }),
+		},
+		['<C-n>'] = {
+			i = function()
+				if cmp.visible() then
+					cmp.select_next_item({ behaviour = types.cmp.SelectBehavior.Insert })
+				else
+					cmp.complete()
+				end
+			end,
+		},
+		['<C-p>'] = {
+			i = function()
+				if cmp.visible() then
+					cmp.select_prev_item({ behaviour = types.cmp.SelectBehavior.Insert })
+				else
+					cmp.complete()
+				end
+			end,
+		},
+		['<C-y>'] = {
+			i = cmp.mapping.confirm({ select = false }),
+		},
+		['<C-e>'] = {
+			i = cmp.mapping.abort(),
+		},
+		['<C-d>'] = cmp.mapping.scroll_docs(-4),
+		['<C-f>'] = cmp.mapping.scroll_docs(4),
+		['<C-Space>'] = cmp.mapping.complete({}),
+		['<CR>'] = cmp.mapping.confirm({
+			behaviour = types.cmp.ConfirmBehavior.Replace,
+			select = true,
+		}),
+	},
 	sources = {
 		{
 			name = 'nvim_lsp',
-			entry_filter = function(entry, ctx)
-
-				local kind = cmp.lsp.CompletionItemKind[entry:get_kind()]
+			---@diagnostic disable-next-line:unused-local
+			entry_filter = function(entry, _ctx)
+				local kind = types.lsp.CompletionItemKind[entry:get_kind()]
 				if kind == 'Text' then
 					return false
 				end
@@ -195,6 +247,9 @@ require('formatter').setup({
 		lua = {
 			require('formatter.filetypes.lua').stylua,
 		},
+		sh = {
+			require('formatter.filetypes.sh').shfmt,
+		},
 		['*'] = {
 			-- require("formatter.filetypes.any").remove_trailing_whitespace,
 			require('formatter.defaults.prettierd'),
@@ -211,3 +266,39 @@ command! -nargs=? -range=% -bar
 ]])
 
 vim.keymap.set('n', '<leader>f', ':Formatter<cr>')
+
+-- Autopairs
+require('nvim-autopairs').setup()
+
+local cmp_autopairs = require('nvim-autopairs.completion.cmp')
+local ts_utils = require('nvim-treesitter.ts_utils')
+
+local ts_node_func_parens_disabled = {
+	-- ecma
+	named_imports = true,
+	-- rust
+	use_declaration = true,
+}
+
+local default_handler = cmp_autopairs.filetypes['*']['('].handler
+cmp_autopairs.filetypes['*']['('].handler = function(char, item, bufnr, rules, commit_character)
+	local node_type = ts_utils.get_node_at_cursor():type()
+	if ts_node_func_parens_disabled[node_type] then
+		if item.data then
+			item.data.funcParensDisabled = true
+		else
+			char = ''
+		end
+	end
+	default_handler(char, item, bufnr, rules, commit_character)
+end
+
+cmp.event:on(
+	'confirm_done',
+	cmp_autopairs.on_confirm_done({
+		sh = false,
+	})
+)
+
+-- TS Autotag
+require('nvim-ts-autotag').setup()
