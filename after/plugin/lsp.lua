@@ -250,9 +250,18 @@ require('formatter').setup({
 		sh = {
 			require('formatter.filetypes.sh').shfmt,
 		},
-		['*'] = {
-			-- require("formatter.filetypes.any").remove_trailing_whitespace,
+		xml = {
+			require('formatter.filetypes.xml').tidy,
+			-- require('formatter.defaults.prettierd'),
+		},
+		js = {
 			require('formatter.defaults.prettierd'),
+		},
+		vue = {
+			require('formatter.defaults.prettierd'),
+		},
+		html = {
+			require('formatter.filetypes.html').prettierd,
 		},
 	},
 })
