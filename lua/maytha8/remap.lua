@@ -25,11 +25,11 @@ vim.keymap.set('n', '<leader>0', function()
 end)
 
 -- Select all text
-vim.keymap.set("n", "<c-a>", "ggVG")
+-- vim.keymap.set("n", "<c-a>", "ggVG")
 
 -- Toggle tagbar
 vim.keymap.set("n", "<leader>t", ":TagbarToggle<cr>")
 
 -- Scrolling
-vim.keymap.set("n", "<c-d>", "<c-d>zz")
-vim.keymap.set("n", "<c-u>", "<c-u>zz")
+-- vim.keymap.set("n", "<c-d>", "<c-d>zz")
+-- vim.keymap.set("n", "<c-u>", "<c-u>zz")

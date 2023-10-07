@@ -10,7 +10,7 @@ return {
 
 	'mbbill/undotree',
 	{ 'kristijanhusak/vim-dadbod-ui', dependencies = { 'tpope/vim-dadbod' } },
-	'saecki/crates.nvim',
+	{ 'saecki/crates.nvim', tag = 'v0.4.0', dependencies = { 'nvim-lua/plenary.nvim' } },
 	{
 		'nvim-telescope/telescope.nvim',
 		tag = '0.1.3',

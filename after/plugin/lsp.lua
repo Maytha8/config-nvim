@@ -225,6 +225,7 @@ cmp.setup({
 			end,
 		},
 		{ name = 'luasnip' },
+		{ name = 'crates' },
 	},
 	enabled = function()
 		-- disable completion in comments
